@@ -32,6 +32,7 @@ const FriendChanges = sequelize.define(
     friend_id: Sequelize.INTEGER,
     old_value: Sequelize.STRING,
     new_value: Sequelize.STRING,
+    column_name: Sequelize.STRING,
   },
   {
     timestamps: false,
@@ -46,8 +47,15 @@ MyFriend.addHook("beforeUpdate", async (friend, options) => {
   console.log("beforeUpdate hook activated");
   await FriendChanges.create({
     friend_id: friend.id,
+    column_name: "Name",
     old_value: friend._previousDataValues.name,
     new_value: friend.dataValues.name,
+  });
+  await FriendChanges.create({
+    friend_id: friend.id,
+    column_name: "Gender",
+    old_value: friend._previousDataValues.gender,
+    new_value: friend.dataValues.gender,
   });
   io.emit("friendUpdated", friend);
 });
@@ -85,9 +93,10 @@ app.put("/update/:id", async (req, res) => {
   // new endpoint to update a friend
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, gender } = req.body;
     const friendToUpdate = await MyFriend.findOne({ where: { id } });
     friendToUpdate.name = name;
+    friendToUpdate.gender = gender;
     await friendToUpdate.save();
     res.json({ message: "Friend updated successfully" });
   } catch (error) {

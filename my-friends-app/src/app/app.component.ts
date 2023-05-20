@@ -13,6 +13,7 @@ export interface FriendChange {
   friend_id: number;
   old_value: string;
   new_value: string;
+  column_name: string;
 }
 
 @Component({
@@ -60,6 +61,10 @@ export interface FriendChange {
         <th mat-header-cell *matHeaderCellDef> New Value </th>
         <td mat-cell *matCellDef="let change"> {{ change.new_value }} </td>
       </ng-container>
+      <ng-container matColumnDef="column_name">
+        <th mat-header-cell *matHeaderCellDef> Column Name </th>
+        <td mat-cell *matCellDef="let change"> {{ change.column_name }} </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="changesDisplayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: changesDisplayedColumns;"></tr>
@@ -71,7 +76,7 @@ export class AppComponent implements OnInit {
   friends: Friend[] = [];
   friendChanges: FriendChange[] = [];
   displayedColumns: string[] = ['id', 'name', 'gender'];
-  changesDisplayedColumns: string[] = ['id', 'friend_id', 'old_value', 'new_value'];
+  changesDisplayedColumns: string[] = ['id', 'friend_id', 'old_value', 'new_value', 'column_name'];
 
   constructor(private http: HttpClient, private socket: Socket) {}
 
